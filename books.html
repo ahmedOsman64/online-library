@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books Table - Online Library</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <style>
+        .books-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .books-table th,
+        .books-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .books-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+
+        .books-table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .books-table img {
+            width: 50px;
+            height: 70px;
+            object-fit: cover;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-actions a {
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .view-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .read-button {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .download-button {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .search-sort-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            gap: 20px;
+        }
+
+        .search-container {
+            flex: 1;
+        }
+
+        .sort-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Online Library</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="books.html" class="active">Books</a></li>
+                <li><a href="upload.html">Upload Books</a></li>
+                <li><a href="Edit Books.html">Edit Books</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Books Table</h2>
+        
+        <div class="search-sort-container">
+            <div class="search-container">
+                <input type="text" id="table-search" placeholder="Search books...">
+                <button id="table-search-button">Search</button>
+            </div>
+            <div class="sort-container">
+                <label for="sort-select">Sort by:</label>
+                <select id="sort-select">
+                    <option value="title">Title</option>
+                    <option value="author">Author</option>
+                </select>
+                <button id="sort-direction">↑</button>
+            </div>
+        </div>
+
+        <table class="books-table" id="books-table">
+            <thead>
+                <tr>
+                    <th>Cover</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="books-table-body">
+                <!-- Table content will be dynamically populated -->
+            </tbody>
+        </table>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span> Online Library</p>
+    </footer>
+
+    <script>
+        // Update copyright year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Book data
+        const books = [
+            { title: 'Book Title 1', author: 'Author Name 1', image: '61PSymKq-sL._AC_UF1000,1000_QL80_.jpg' },
+            { title: 'Book Title 2', author: 'Author Name 2', image: '71e345nSDIL._UF1000,1000_QL80_.jpg' },
+            { title: 'Book Title 3', author: 'Author Name 3', image: 'images.jpg' },
+            { title: 'Book Title 4', author: 'Author Name 4', image: 'unnamed.jpg' },
+            { title: 'Book Title 5', author: 'Author Name 5', image: '2_4x.webp' },
+            { title: 'Book Title 6', author: 'Author Name 6', image: 'Keating-and-Waldman-–-War-and-Peace-in-Somalia-RGB-WEB.jpg' },
+            { title: 'Book Title 7', author: 'Author Name 7', image: 'Madinah-Arabic-Reader-1-cover.jpg' },
+            { title: 'Book Title 8', author: 'Author Name 8', image: '9781782049876i.jpg' },
+            { title: 'Book Title 9', author: 'Author Name 9', image: 'design-for-writers-book-cover-tf-2-a-million-to-one.webp' },
+            { title: 'Book Title 10', author: 'Author Name 10', image: '61PSymKq-sL._AC_UF1000,1000_QL80_.jpg' },
+            { title: 'Book Title 11', author: 'Author Name 11', image: 'IMG_1750-copy-scaled.jpg' },
+            { title: 'Book Title 12', author: 'Author Name 12', image: '61PSymKq-sL._AC_UF1000,1000_QL80_.jpg' }
+        ];
+
+        // Function to create table row for a book
+        function createBookRow(book) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="assets/book-covers/${book.image}" alt="${book.title}" onerror="handleImageError(this)"></td>
+                <td><span class="editable-content" data-type="title">${book.title}</span></td>
+                <td><span class="editable-content" data-type="author">${book.author}</span></td>
+                <td>
+                    <div class="table-actions">
+                        <a href="book-details.html?title=${encodeURIComponent(book.title)}&author=${encodeURIComponent(book.author)}&image=${encodeURIComponent(book.image)}" class="view-button">View</a>
+                        <a href="reader.html?book=${encodeURIComponent(book.title)}" class="read-button">Read</a>
+                        <a href="download.php?book=${encodeURIComponent(book.title)}" class="download-button">Download</a>
+                    </div>
+                </td>
+            `;
+            return row;
+        }
+
+        // Function to populate table
+        function populateTable(booksToShow) {
+            const tableBody = document.getElementById('books-table-body');
+            tableBody.innerHTML = '';
+            booksToShow.forEach(book => {
+                tableBody.appendChild(createBookRow(book));
+            });
+        }
+
+        // Initialize table
+        populateTable(books);
+
+        // Search functionality
+        const searchInput = document.getElementById('table-search');
+        const searchButton = document.getElementById('table-search-button');
+
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredBooks = books.filter(book => 
+                book.title.toLowerCase().includes(searchTerm) || 
+                book.author.toLowerCase().includes(searchTerm)
+            );
+            populateTable(filteredBooks);
+        }
+
+        searchInput.addEventListener('keyup', performSearch);
+        searchButton.addEventListener('click', performSearch);
+
+        // Sorting functionality
+        const sortSelect = document.getElementById('sort-select');
+        const sortDirection = document.getElementById('sort-direction');
+        let isAscending = true;
+
+        function sortBooks() {
+            const sortBy = sortSelect.value;
+            const sortedBooks = [...books].sort((a, b) => {
+                const compareResult = a[sortBy].localeCompare(b[sortBy]);
+                return isAscending ? compareResult : -compareResult;
+            });
+            populateTable(sortedBooks);
+        }
+
+        sortSelect.addEventListener('change', sortBooks);
+        sortDirection.addEventListener('click', () => {
+            isAscending = !isAscending;
+            sortDirection.textContent = isAscending ? '↑' : '↓';
+            sortBooks();
+        });
+    </script>
+</body>
+</html>

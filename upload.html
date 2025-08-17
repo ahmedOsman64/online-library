@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Books - Online Library</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>Online Library</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="upload.html" class="active">Upload Books</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="upload-manager">
+            <h2>Upload Books Manager</h2>
+            
+            <div class="upload-controls">
+                <button id="add-book" class="primary-button">Add New Book</button>
+                <div class="search-container">
+                    <input type="text" id="upload-search" placeholder="Search uploads...">
+                </div>
+            </div>
+
+            <table class="uploads-table">
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Upload Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="uploads-list">
+                    <!-- Sample row structure -->
+                    <tr>
+                        <td><img src="assets/book-covers/default-cover.jpg" alt="Book Cover" class="upload-thumbnail"></td>
+                        <td>Sample Book</td>
+                        <td>Sample Author</td>
+                        <td>2024-03-21</td>
+                        <td><span class="status-badge processing">Processing</span></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Upload Modal -->
+        <div id="upload-modal" class="modal-overlay">
+            <div class="modal-content">
+                <h3>Upload New Book</h3>
+                <form id="book-upload-form">
+                    <div class="form-group">
+                        <label for="book-title">Book Title:</label>
+                        <input type="text" id="book-title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-author">Author:</label>
+                        <input type="text" id="book-author" name="author" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-cover">Book Cover:</label>
+                        <input type="file" id="book-cover" name="cover" accept="image/*" required>
+                        <div id="cover-preview" class="cover-preview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-file">Book File (PDF):</label>
+                        <input type="file" id="book-file" name="book" accept=".pdf" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-button">Upload Book</button>
+                        <button type="button" class="cancel-button" id="cancel-upload">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span> Online Library</p>
+    </footer>
+
+    <script>
+        // Sample data for uploads
+        let uploads = [
+            { id: 1, title: 'Book Title 1', author: 'Author 1', date: '2024-03-20', status: 'Complete', image: '61PSymKq-sL._AC_UF1000,1000_QL80_.jpg' },
+            { id: 2, title: 'Book Title 2', author: 'Author 2', date: '2024-03-19', status: 'Processing', image: '71e345nSDIL._UF1000,1000_QL80_.jpg' },
+            { id: 3, title: 'Book Title 3', author: 'Author 3', date: '2024-03-18', status: 'Failed', image: 'images.jpg' }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadsList = document.getElementById('uploads-list');
+            const addBookBtn = document.getElementById('add-book');
+            const uploadModal = document.getElementById('upload-modal');
+            const uploadForm = document.getElementById('book-upload-form');
+            const cancelBtn = document.getElementById('cancel-upload');
+            const searchInput = document.getElementById('upload-search');
+            const coverInput = document.getElementById('book-cover');
+            const coverPreview = document.getElementById('cover-preview');
+
+            // Update copyright year
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            // Function to create table row
+            function createUploadRow(upload) {
+                const row = document.createElement('tr');
+                row.dataset.id = upload.id;
+                row.innerHTML = `
+                    <td><img src="assets/book-covers/${upload.image}" alt="${upload.title}" class="upload-thumbnail"></td>
+                    <td class="editable" data-field="title">${upload.title}</td>
+                    <td class="editable" data-field="author">${upload.author}</td>
+                    <td>${upload.date}</td>
+                    <td><span class="status-badge ${upload.status.toLowerCase()}">${upload.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="edit-btn" onclick="editRow(${upload.id})">Edit</button>
+                            <button class="delete-btn" onclick="deleteUpload(${upload.id})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                return row;
+            }
+
+            // Populate table
+            function populateTable(uploadsData) {
+                uploadsList.innerHTML = '';
+                uploadsData.forEach(upload => {
+                    uploadsList.appendChild(createUploadRow(upload));
+                });
+            }
+
+            // Show/hide modal
+            addBookBtn.addEventListener('click', () => {
+                uploadModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                uploadModal.style.display = 'none';
+                uploadForm.reset();
+                coverPreview.innerHTML = '';
+                document.body.style.overflow = '';
+            });
+
+            // Handle form submission
+            uploadForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(uploadForm);
+                
+                const newUpload = {
+                    id: uploads.length + 1,
+                    title: formData.get('title'),
+                    author: formData.get('author'),
+                    date: new Date().toISOString().split('T')[0],
+                    status: 'Processing',
+                    image: formData.get('cover').name || 'default-cover.jpg'
+                };
+
+                uploads.unshift(newUpload);
+                populateTable(uploads);
+                
+                uploadModal.style.display = 'none';
+                uploadForm.reset();
+                coverPreview.innerHTML = '';
+                document.body.style.overflow = '';
+            });
+
+            // Preview cover image
+            coverInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        coverPreview.innerHTML = `<img src="${e.target.result}" alt="Cover Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredUploads = uploads.filter(upload => 
+                    upload.title.toLowerCase().includes(searchTerm) ||
+                    upload.author.toLowerCase().includes(searchTerm)
+                );
+                populateTable(filteredUploads);
+            });
+
+            // Initial population
+            populateTable(uploads);
+        });
+
+        // Edit functionality
+        function editRow(id) {
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            const upload = uploads.find(u => u.id === id);
+            
+            if (!row || !upload) return;
+
+            const titleCell = row.querySelector('td[data-field="title"]');
+            const authorCell = row.querySelector('td[data-field="author"]');
+            
+            // Create input for title
+            const titleInput = document.createElement('input');
+            titleInput.type = 'text';
+            titleInput.value = upload.title;
+            titleInput.className = 'edit-input';
+            
+            // Create input for author
+            const authorInput = document.createElement('input');
+            authorInput.type = 'text';
+            authorInput.value = upload.author;
+            authorInput.className = 'edit-input';
+            
+            // Replace cells with inputs
+            titleCell.innerHTML = '';
+            titleCell.appendChild(titleInput);
+            authorCell.innerHTML = '';
+            authorCell.appendChild(authorInput);
+            
+            // Change edit button to save button
+            const editBtn = row.querySelector('.edit-btn');
+            editBtn.textContent = 'Save';
+            editBtn.onclick = () => saveRow(id, titleInput.value, authorInput.value);
+            
+            // Focus on title input
+            titleInput.focus();
+        }
+
+        // Save functionality
+        function saveRow(id, newTitle, newAuthor) {
+            const upload = uploads.find(u => u.id === id);
+            if (!upload) return;
+            
+            upload.title = newTitle;
+            upload.author = newAuthor;
+            
+            // Refresh the table
+            populateTable(uploads);
+        }
+
+        // Delete functionality
+        function deleteUpload(id) {
+            if (confirm('Are you sure you want to delete this upload?')) {
+                uploads = uploads.filter(u => u.id !== id);
+                populateTable(uploads);
+            }
+        }
+    </script>
+</body>
+</html>

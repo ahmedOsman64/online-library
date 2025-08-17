@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Books - Online Library</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>Online Library</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="upload.html">Upload Books</a></li>
+                <li><a href="Edit Books.html" class="active">Edit Books</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="edit-manager">
+            <h2>Edit Books Manager</h2>
+            
+            <div class="edit-controls">
+                <div class="search-container">
+                    <input type="text" id="edit-search" placeholder="Search books...">
+                </div>
+            </div>
+
+            <table class="edit-table">
+                <thead>
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="edit-list">
+                    <!-- Books will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span> Online Library</p>
+    </footer>
+
+    <script>
+        // Sample book data
+        let books = [
+            { id: 1, title: 'Book Title 1', author: 'Author 1', status: 'Available', image: '61PSymKq-sL._AC_UF1000,1000_QL80_.jpg' },
+            { id: 2, title: 'Book Title 2', author: 'Author 2', status: 'Borrowed', image: '71e345nSDIL._UF1000,1000_QL80_.jpg' },
+            { id: 3, title: 'Book Title 3', author: 'Author 3', status: 'Available', image: 'images.jpg' },
+            { id: 4, title: 'Book Title 4', author: 'Author 4', status: 'Maintenance', image: 'unnamed.jpg' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const editList = document.getElementById('edit-list');
+            const searchInput = document.getElementById('edit-search');
+
+            // Update copyright year
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+
+            function createBookRow(book) {
+                const row = document.createElement('tr');
+                row.dataset.id = book.id;
+                row.innerHTML = `
+                    <td><img src="assets/book-covers/${book.image}" alt="${book.title}" class="edit-thumbnail"></td>
+                    <td class="editable" data-field="title">${book.title}</td>
+                    <td class="editable" data-field="author">${book.author}</td>
+                    <td>
+                        <select class="status-select" onchange="updateStatus(${book.id}, this.value)">
+                            <option value="Available" ${book.status === 'Available' ? 'selected' : ''}>Available</option>
+                            <option value="Borrowed" ${book.status === 'Borrowed' ? 'selected' : ''}>Borrowed</option>
+                            <option value="Maintenance" ${book.status === 'Maintenance' ? 'selected' : ''}>Maintenance</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="edit-btn" onclick="editBook(${book.id})">Edit</button>
+                            <button class="delete-btn" onclick="deleteBook(${book.id})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                return row;
+            }
+
+            function populateTable(booksData) {
+                editList.innerHTML = '';
+                booksData.forEach(book => {
+                    editList.appendChild(createBookRow(book));
+                });
+            }
+
+            // Search functionality
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredBooks = books.filter(book => 
+                    book.title.toLowerCase().includes(searchTerm) ||
+                    book.author.toLowerCase().includes(searchTerm)
+                );
+                populateTable(filteredBooks);
+            });
+
+            // Initial population
+            populateTable(books);
+        });
+
+        // Edit functionality
+        function editBook(id) {
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            const book = books.find(b => b.id === id);
+            
+            if (!row || !book) return;
+
+            const titleCell = row.querySelector('td[data-field="title"]');
+            const authorCell = row.querySelector('td[data-field="author"]');
+            
+            // Create input for title
+            const titleInput = document.createElement('input');
+            titleInput.type = 'text';
+            titleInput.value = book.title;
+            titleInput.className = 'edit-input';
+            
+            // Create input for author
+            const authorInput = document.createElement('input');
+            authorInput.type = 'text';
+            authorInput.value = book.author;
+            authorInput.className = 'edit-input';
+            
+            // Replace cells with inputs
+            titleCell.innerHTML = '';
+            titleCell.appendChild(titleInput);
+            authorCell.innerHTML = '';
+            authorCell.appendChild(authorInput);
+            
+            // Change edit button to save button
+            const editBtn = row.querySelector('.edit-btn');
+            editBtn.textContent = 'Save';
+            editBtn.onclick = () => saveBook(id, titleInput.value, authorInput.value);
+            
+            // Focus on title input
+            titleInput.focus();
+        }
+
+        // Save functionality
+        function saveBook(id, newTitle, newAuthor) {
+            const book = books.find(b => b.id === id);
+            if (!book) return;
+            
+            book.title = newTitle;
+            book.author = newAuthor;
+            
+            // Refresh the table
+            populateTable(books);
+        }
+
+        // Update status functionality
+        function updateStatus(id, newStatus) {
+            const book = books.find(b => b.id === id);
+            if (book) {
+                book.status = newStatus;
+            }
+        }
+
+        // Delete functionality
+        function deleteBook(id) {
+            if (confirm('Are you sure you want to delete this book?')) {
+                books = books.filter(b => b.id !== id);
+                populateTable(books);
+            }
+        }
+    </script>
+</body>
+</html>

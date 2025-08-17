@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Online Library</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>Online Library</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="books.html">Books</a></li>
+                <li><a href="upload.html">Upload Books</a></li>
+                <li><a href="Edit Books.html">Edit Books</a></li>
+            </ul>
+        </nav>
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search books...">
+            <button id="search-button">Search</button>
+        </div>
+        <div id="upload-form" class="upload-form modal-overlay">
+            <div class="modal-content">
+                <h3>Upload New Book</h3>
+                <form id="book-upload-form">
+                    <div class="form-group">
+                        <label for="book-title">Book Title:</label>
+                        <input type="text" id="book-title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-author">Author:</label>
+                        <input type="text" id="book-author" name="author" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-cover">Book Cover:</label>
+                        <input type="file" id="book-cover" name="cover" accept="image/*" required>
+                        <div id="cover-preview" class="cover-preview"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="book-file">Book File (PDF):</label>
+                        <input type="file" id="book-file" name="book" accept=".pdf" required>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-button">Upload Book</button>
+                        <button type="button" class="cancel-button" id="cancel-upload">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <h2>All Books</h2>
+        <div class="book-list" id="book-list">
+            <!-- Book 1 -->
+            <div class="book">
+                <img src="assets/book-covers/61PSymKq-sL._AC_UF1000,1000_QL80_.jpg" alt="Book 1">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 1</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 1</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%201&author=Author%20Name%201&image=61PSymKq-sL._AC_UF1000,1000_QL80_.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%201" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 2 -->
+            <div class="book">
+                <img src="assets/book-covers/71e345nSDIL._UF1000,1000_QL80_.jpg" alt="Book 2">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 2</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 2</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%202&author=Author%20Name%202&image=71e345nSDIL._UF1000,1000_QL80_.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%202" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 3 -->
+            <div class="book">
+                <img src="assets/book-covers/images.jpg" alt="Book 3">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 3</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 3</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%203&author=Author%20Name%203&image=images.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%203" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 4 -->
+            <div class="book">
+                <img src="assets/book-covers/unnamed.jpg" alt="Book 4">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 4</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 4</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%204&author=Author%20Name%204&image=unnamed.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%204" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 5 -->
+            <div class="book">
+                <img src="assets/book-covers/2_4x.webp" alt="Book 5">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 5</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 5</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%205&author=Author%20Name%205&image=2_4x.webp">View Details</a>
+                        <a href="reader.html?book=Book%20Title%205" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 6 -->
+            <div class="book">
+                <img src="assets/book-covers/Keating-and-Waldman-–-War-and-Peace-in-Somalia-RGB-WEB.jpg" alt="Book 6">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 6</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 6</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%206&author=Author%20Name%206&image=Keating-and-Waldman-–-War-and-Peace-in-Somalia-RGB-WEB.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%206" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 7 -->
+            <div class="book">
+                <img src="assets/book-covers/Madinah-Arabic-Reader-1-cover.jpg" alt="Book 7">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 7</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 7</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%207&author=Author%20Name%207&image=Madinah-Arabic-Reader-1-cover.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%207" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 8 -->
+            <div class="book">
+                <img src="assets/book-covers/9781782049876i.jpg" alt="Book 8">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 8</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 8</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%208&author=Author%20Name%208&image=9781782049876i.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%208" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 9 -->
+            <div class="book">
+                <img src="assets/book-covers/design-for-writers-book-cover-tf-2-a-million-to-one.webp" alt="Book 9">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 9</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 9</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%209&author=Author%20Name%209&image=design-for-writers-book-cover-tf-2-a-million-to-one.webp">View Details</a>
+                        <a href="reader.html?book=Book%20Title%209" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 10 -->
+            <div class="book">
+                <img src="assets/book-covers/61PSymKq-sL._AC_UF1000,1000_QL80_.jpg" alt="Book 10">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 10</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 10</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%2010&author=Author%20Name%2010&image=61PSymKq-sL._AC_UF1000,1000_QL80_.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%2010" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 11 -->
+            <div class="book">
+                <img src="assets/book-covers/IMG_1750-copy-scaled.jpg" alt="Book 11">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 11</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 11</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%2011&author=Author%20Name%2011&image=IMG_1750-copy-scaled.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%2011" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 12 -->
+            <div class="book">
+                <img src="assets/book-covers/61PSymKq-sL._AC_UF1000,1000_QL80_.jpg" alt="Book 12">
+                <div class="book-info">
+                    <h3>
+                        <span class="editable-content" data-type="title">Book Title 12</span>
+                    </h3>
+                    <p>
+                        Author: <span class="editable-content" data-type="author">Author Name 12</span>
+                    </p>
+                    <div class="book-actions">
+                        <a href="book-details.html?title=Book%20Title%2012&author=Author%20Name%2012&image=61PSymKq-sL._AC_UF1000,1000_QL80_.jpg">View Details</a>
+                        <a href="reader.html?book=Book%20Title%2012" class="read-button">Read Book</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span> Online Library</p>
+    </footer>
+
+    <script>
+        // Update copyright year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Search functionality
+        const searchInput = document.getElementById('search');
+        const searchButton = document.getElementById('search-button');
+        const bookList = document.getElementById('book-list');
+        const books = bookList.getElementsByClassName('book');
+
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            
+            Array.from(books).forEach(book => {
+                const title = book.querySelector('h3').textContent.toLowerCase();
+                const author = book.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                    book.style.display = '';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        }
+
+        searchInput.addEventListener('keyup', performSearch);
+        searchButton.addEventListener('click', performSearch);
+    </script>
+</body>
+</html>

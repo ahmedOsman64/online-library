@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details - Online Library</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    <header>
+        <h1>Online Library</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="books.html">Books</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="book-details">
+            <div id="loading-message" class="message">
+                <p>Loading book details...</p>
+            </div>
+            <div id="error-message" class="error-message" style="display: none;">
+                <p>Sorry, book details could not be found.</p>
+                <a href="index.html" class="button">Return to Home</a>
+            </div>
+            <div id="book-content" style="display: none;">
+                <img id="book-image" alt="Book Cover" onerror="handleImageError(this)">
+                <h2 id="book-title"></h2>
+                <p id="book-author"></p>
+                <p id="book-description"></p>
+                <div class="book-actions">
+                    <a href="#" class="read-button" id="read-button">Read Online</a>
+                    <a href="#" class="download-button" id="download-button">Download</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; <span id="current-year"></span> Online Library</p>
+    </footer>
+
+    <script>
+        // Update copyright year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Function to handle image loading errors
+        function handleImageError(img) {
+            img.src = 'assets/book-covers/default-cover.jpg';
+            img.alt = 'Default Book Cover';
+        }
+
+        // Function to show error message
+        function showError() {
+            document.getElementById('loading-message').style.display = 'none';
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('book-content').style.display = 'none';
+        }
+
+        // Function to show content
+        function showContent() {
+            document.getElementById('loading-message').style.display = 'none';
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('book-content').style.display = 'block';
+        }
+
+        // Function to sanitize and decode URL parameters
+        function safeDecodeURIComponent(str) {
+            try {
+                return decodeURIComponent(str);
+            } catch (e) {
+                console.error('Error decoding URL parameter:', e);
+                return '';
+            }
+        }
+
+        // Function to update book details
+        async function updateBookDetails() {
+            try {
+                // Get URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const title = urlParams.get('title');
+                const author = urlParams.get('author');
+                const image = urlParams.get('image');
+
+                // Check if required parameters are present
+                if (!title || !author || !image) {
+                    throw new Error('Missing required book details');
+                }
+
+                // Update the page content dynamically
+                document.getElementById('book-title').textContent = safeDecodeURIComponent(title);
+                document.getElementById('book-author').textContent = `Author: ${safeDecodeURIComponent(author)}`;
+                
+                const bookImage = document.getElementById('book-image');
+                bookImage.src = `assets/book-covers/${encodeURIComponent(image)}`;
+                bookImage.alt = `${safeDecodeURIComponent(title)} Cover`;
+                
+                document.getElementById('book-description').textContent = 
+                    `Description: This is a brief description of ${safeDecodeURIComponent(title)}. More details can be added here.`;
+
+                // Update button links
+                document.getElementById('read-button').href = `reader.html?book=${encodeURIComponent(title)}`;
+                document.getElementById('download-button').href = `download.php?book=${encodeURIComponent(title)}`;
+
+                showContent();
+            } catch (error) {
+                console.error('Error loading book details:', error);
+                showError();
+            }
+        }
+
+        // Initialize the page
+        updateBookDetails();
+    </script>
+</body>
+</html>
